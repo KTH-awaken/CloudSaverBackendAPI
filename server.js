@@ -44,16 +44,39 @@ function fetchWithTimeout(url, timeout = 7000) {
       return null;
     }
   }
-// Function to calculate power consumption
-function calculatePowerConsumption(apiData) {
-  // Logic to calculate power consumption based on apiData goes here
-  // For now, it's just a placeholder
-  return 'Calculated power consumption test';
+
+  function calculatePowerConsumption(apiData) {
+    const { statusData, capacitiesData } = apiData;
+
+    let totalPowerConsumption = 0;
+  
+    // Assuming statusData and capacitiesData are arrays with one element each
+    const statusHosts = statusData[0].status.hosts;
+    const capacityHosts = capacitiesData[0].capacities.hosts;
+
+    console.log("hello 2");
+    statusHosts.forEach(host => {
+      console.log("hello 3");
+        const cpuLoadPercentage = host.cpu.load.main / 100; // Convert to fraction
+        const matchingHost = capacityHosts.find(h => h.id === host.id);
+        const gpuCount = matchingHost ? matchingHost.gpu.count : 0;
+
+        const powerCPU = cpuLoadPercentage * avgPowerCPU;
+        const powerGPU = gpuCount * avgPowerGPU; // Assuming full load for GPUs
+
+        totalPowerConsumption += powerCPU + powerGPU;
+    });
+
+    // Convert power consumption in Watts to kilowatt-hours (assuming 1 hour of operation)
+    const totalEnergyConsumptionKWh = totalPowerConsumption / 1000;
+    return totalEnergyConsumptionKWh.toFixed(2); // Round to 2 decimal places
 }
 
-// Define the 'usage' endpoint
+  
+  
+
 app.get('/usage', async (req, res) => {
-    console.log("Request received at /usage endpoint");
+  console.log("Request received at /usage endpoint");
   const statusUrl = 'https://api.cloud.cbh.kth.se/landing/v2/status?n=1';
   const capacitiesUrl = 'https://api.cloud.cbh.kth.se/landing/v2/capacities';
   const statsUrl = 'https://api.cloud.cbh.kth.se/landing/v2/stats';
@@ -65,13 +88,21 @@ app.get('/usage', async (req, res) => {
   const statsData = await fetchData(statsUrl);
   const hostInfoData = await fetchData(hostInfoUrl);
 
+  if (!statusData || !capacitiesData || !statsData || !hostInfoData) {
+    // If any fetch fails, respond with an error message
+  console.log("Failed to fetch data from one or more APIs");
+    return res.status(500).json({ error: "Failed to fetch data from one or more APIs" });
+  }
+  console.log("hello 1");
+  console.log(capacitiesData);
+
   // Calculate the power consumption
   const powerConsumption = calculatePowerConsumption({statusData, capacitiesData, statsData, hostInfoData});
 
   // Respond with the calculated power consumption
   res.json({ powerConsumption });
-  console.log(res.json({ powerConsumption }));
 });
+
 
 // app.get('/usage', async (req, res) => { //test get usage
 //     res.json({ message: "Test response" });
