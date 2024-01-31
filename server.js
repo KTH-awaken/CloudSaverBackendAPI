@@ -1,3 +1,4 @@
+//Kör projektet med node server.js
 const express = require('express');
 
 const app = express();
@@ -15,7 +16,6 @@ async function fetchData(url) {
     return null;
   }
 }
-
 
 // Constants for power consumption estimates (in watts)
 const avgPowerCPU = 95;  // Average power for CPU under full load
@@ -54,9 +54,7 @@ function fetchWithTimeout(url, timeout = 7000) {
     const statusHosts = statusData[0].status.hosts;
     const capacityHosts = capacitiesData[0].capacities.hosts;
 
-    console.log("hello 2");
     statusHosts.forEach(host => {
-      console.log("hello 3");
         const cpuLoadPercentage = host.cpu.load.main / 100; // Convert to fraction
         const matchingHost = capacityHosts.find(h => h.id === host.id);
         const gpuCount = matchingHost ? matchingHost.gpu.count : 0;
@@ -72,8 +70,6 @@ function fetchWithTimeout(url, timeout = 7000) {
     return totalEnergyConsumptionKWh.toFixed(2); // Round to 2 decimal places
 }
 
-  
-  
 
 app.get('/usage', async (req, res) => {
   console.log("Request received at /usage endpoint");
@@ -93,7 +89,6 @@ app.get('/usage', async (req, res) => {
   console.log("Failed to fetch data from one or more APIs");
     return res.status(500).json({ error: "Failed to fetch data from one or more APIs" });
   }
-  console.log("hello 1");
   console.log(capacitiesData);
 
   // Calculate the power consumption
@@ -104,9 +99,6 @@ app.get('/usage', async (req, res) => {
 });
 
 
-// app.get('/usage', async (req, res) => { //test get usage
-//     res.json({ message: "Test response" });
-//   });
 
 const PORT = 3000;
 app.listen(PORT, () => {
