@@ -100,7 +100,10 @@ app.get('/usage', async (req, res) => {
   res.json({ powerConsumption });
 });
 
-
+app.get('/test', async (req, res) => {
+  console.log("Request received at /test endpoint");
+  res.json({ message: "Hello world!" });
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {
