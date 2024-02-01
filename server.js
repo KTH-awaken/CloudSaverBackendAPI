@@ -9,7 +9,7 @@ app.use(express.json());
 
 async function fetchData(url) {
   try {
-    const fetch = (await import('node-fetch')).default;
+    const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
     const response = await fetch(url);
     const data = await response.json();
     return data;
