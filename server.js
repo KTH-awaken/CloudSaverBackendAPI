@@ -27,7 +27,7 @@ const idlePowerCPU = 10;
 const idlePowerGPU = 10;
 const idlePowerRAM = 2;
 
-function fetchWithTimeout(url, timeout = 7000) {
+function fetchWithTimeout(url, timeout = 70000) {
     return Promise.race([
       fetch(url),
       new Promise((_, reject) => 
@@ -39,13 +39,17 @@ function fetchWithTimeout(url, timeout = 7000) {
   async function fetchData(url) {
     try {
       const response = await fetchWithTimeout(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error.message);
       return null;
     }
   }
+  
 
   function calculatePowerConsumption(apiData) {
     const { statusData, capacitiesData } = apiData;
@@ -103,6 +107,15 @@ app.get('/usage', async (req, res) => {
 app.get('/test', async (req, res) => {
   console.log("Request received at /test endpoint Hello world!");
   res.json({ message: "Hello world!!!!!!" });
+});
+
+app.get('/test2', async (req, res) => {
+  const ipData = await fetchData('https://httpbin.org/ip');
+  if (!ipData) {
+    return res.status(500).json({ error: "Failed to fetch IP data" });
+  }
+  console.log(ipData);
+  res.json({ ipData });
 });
 
 const PORT = process.env.PORT || 8080;
