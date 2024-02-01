@@ -1,7 +1,7 @@
 //samma projekt som CloudSaverBackend men nu på Marcus privata repo
 //Kör projektet med: node server.js
 //Nå endpoint från browser: http://localhost:3000/usage
-//Todo dela upp usage i ett objekt med total usage och cpu usage och gpu usage
+
 const express = require('express');
 
 const app = express();
@@ -77,8 +77,8 @@ function fetchWithTimeout(url, timeout = 70000) {
         const powerCPU = (cpuLoadPercentage * avgPowerCPU)/1000; //delat med 1000 för att få kW
         const powerGPU = (gpuCount * avgPowerGPU)/1000; // Assuming full load for GPUs delat med 1000 för att få kW
 
-        usage.cpuPowerConsumption += powerCPU;
-        usage.gpuPowerConsumption += powerGPU;
+        usage.cpuPowerConsumption += powerCPU.toFixed(2);
+        usage.gpuPowerConsumption += powerGPU.toFixed(2);
         usage.totalPowerConsumption += powerCPU + powerGPU;
     });
 
