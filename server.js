@@ -1,6 +1,7 @@
 //samma projekt som CloudSaverBackend men nu på Marcus privata repo
 //Kör projektet med: node server.js
 //Nå endpoint från browser: http://localhost:3000/usage
+//Todo dela upp usage i ett objekt med total usage och cpu usage och gpu usage
 const express = require('express');
 
 const app = express();
@@ -55,7 +56,14 @@ function fetchWithTimeout(url, timeout = 70000) {
   function calculatePowerConsumption(apiData) {
     const { statusData, capacitiesData } = apiData;
 
-    let totalPowerConsumption = 0;
+    let usage= {
+      totalPowerConsumption: 0,
+      cpuPowerConsumption: 0,
+      gpuPowerConsumption: 0,
+      ramPowerConsumption: 0
+    }
+
+    // let totalPowerConsumption = 0;
   
     // Assuming statusData and capacitiesData are arrays with one element each
     const statusHosts = statusData[0].status.hosts;
@@ -66,15 +74,18 @@ function fetchWithTimeout(url, timeout = 70000) {
         const matchingHost = capacityHosts.find(h => h.id === host.id);
         const gpuCount = matchingHost ? matchingHost.gpu.count : 0;
 
-        const powerCPU = cpuLoadPercentage * avgPowerCPU;
-        const powerGPU = gpuCount * avgPowerGPU; // Assuming full load for GPUs
+        const powerCPU = (cpuLoadPercentage * avgPowerCPU)/1000; //delat med 1000 för att få kW
+        const powerGPU = (gpuCount * avgPowerGPU)/1000; // Assuming full load for GPUs delat med 1000 för att få kW
 
-        totalPowerConsumption += powerCPU + powerGPU;
+        usage.cpuPowerConsumption += powerCPU;
+        usage.gpuPowerConsumption += powerGPU;
+        usage.totalPowerConsumption += powerCPU + powerGPU;
     });
 
     // Convert power consumption in Watts to kilowatt-hours (assuming 1 hour of operation)
-    const totalEnergyConsumptionKWh = totalPowerConsumption / 1000;
-    return totalEnergyConsumptionKWh.toFixed(2); // Round to 2 decimal places
+    // const totalEnergyConsumptionKWh = totalPowerConsumption / 1000;
+    // return totalEnergyConsumptionKWh.toFixed(2); // Round to 2 decimal places
+    return usage;
 }
 
 
