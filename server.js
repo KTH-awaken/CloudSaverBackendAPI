@@ -102,7 +102,7 @@ app.get('/usage', async (req, res) => {
 
 app.get('/test', async (req, res) => {
   console.log("Request received at /test endpoint Hello world!");
-  res.json({ message: "Hello world!!!!" });
+  res.json({ message: "Hello world!!!!!" });
 });
 
 const PORT = process.env.PORT || 8080;
