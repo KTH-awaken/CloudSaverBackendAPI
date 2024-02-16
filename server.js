@@ -3,12 +3,15 @@
 //Nå endpoint från browser: http://localhost:3000/usage
 
 const express = require('express');
+const cors = require("cors")
 require('dotenv').config();
 const mongoose = require('mongoose');
 const SystemInfo = require('./model'); // Import your model
 
 
+
 const app = express();
+app.use(cors())
 mongoose.connect(process.env.MONGO_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected...'))
   .catch(err => console.log(err));
@@ -143,7 +146,7 @@ app.get('/api/systeminfo/:last', async (req, res) => {
     const last = +req.params.last || 60;
     const systemInfos = await SystemInfo
       .find()
-      .sort({ timestamp: -1 }) // Sort by timestamp in descending order
+      // .sort({ timestamp: -1 }) // Sort by timestamp in descending order
       .limit(last); // Limit to last 10 documents;
     res.json(systemInfos);
   } catch (error) {
