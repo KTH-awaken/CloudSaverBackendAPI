@@ -142,12 +142,27 @@ app.get('/test2', async (req, res) => {
 });
 
 
-app.get('/api/systeminfo/:last', async (req, res) => {
+// app.get('/api/systeminfo/:last', async (req, res) => {
+//   try {
+//     const last = +req.params.last || 60;
+//     const systemInfos = await SystemInfo
+//       .find()
+//       // .sort({ timestamp: -1 }) // Sort by timestamp in descending order
+//       .limit(last); // Limit to last 10 documents;
+//     res.json(systemInfos);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+
+app.get('/api/systeminfo/:resource/:last', async (req, res) => {
   try {
     const last = +req.params.last || 60;
+    const resource = req.params.resource;
     const systemInfos = await SystemInfo
       .find()
-      // .sort({ timestamp: -1 }) // Sort by timestamp in descending order
+      .where('resource_name').equals(resource)
       .limit(last); // Limit to last 10 documents;
     res.json(systemInfos);
   } catch (error) {
@@ -156,7 +171,8 @@ app.get('/api/systeminfo/:last', async (req, res) => {
 });
 
 
-const PORT = process.env.PORT ;
+
+const PORT = process.env.PORT ||8080 ;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
