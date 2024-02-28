@@ -156,14 +156,12 @@ app.get('/test2', async (req, res) => {
 // });
 
 
-app.get('/api/systeminfo/:resource/:last', async (req, res) => {
+app.get('/api/systeminfo/:resource', async (req, res) => {
   try {
-    const last = +req.params.last || 60;
     const resource = req.params.resource;
     const systemInfos = await SystemInfo
       .find()
       .where('resource_name').equals(resource)
-      .limit(last); // Limit to last 10 documents;
     res.json(systemInfos);
   } catch (error) {
     res.status(500).json({ message: error.message });
