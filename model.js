@@ -27,7 +27,9 @@ const systemInfoSchema = new mongoose.Schema({
   usage: [{
     cpu_usage: String,
     memory_usage: String,
-    timestamp: Number
+    timestamp: Number,
+    cpu_percentage: Number,
+    energy_consumption: String
   }]
 }, { timestamps: true });
 
