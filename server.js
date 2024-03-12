@@ -219,12 +219,14 @@ app.get('/api/:resource/:limit', async (req, res) => {
         });
 
         const mappedData = [];
-        
+
         trimmedDocuments.forEach(doc => {
             if (doc.labels[0]['k8s-app'] !== undefined) {
                 mappedData.push({
                     resource_name: doc.resource_name,
                     label: doc.labels[0]['k8s-app'],
+                    pod_name: doc.pod_name,
+                    custom_name: doc.custom_name,
                     usage: doc.usage,
                 })
             }
