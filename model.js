@@ -30,6 +30,9 @@ const systemInfoSchema = new mongoose.Schema({
     timestamp: Number,
     cpu_percentage: Number,
     energy_consumption: String
+  }],
+  labels: [{
+    'k8s-app': String,
   }]
 }, { timestamps: true });
 

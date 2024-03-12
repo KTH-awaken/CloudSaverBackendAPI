@@ -202,6 +202,40 @@ app.get('/api/:resource/:namespace/:limit', async (req, res) => {
     }
 });
 
+app.get('/api/:resource/:limit', async (req, res) => {
+    try {
+        const resource = req.params.resource;
+        const limit = req.params.limit;
+
+        const documents = await SystemInfo.find({
+            resource_name: resource,
+        });
+
+        const trimmedDocuments = documents.map(doc => {
+            if (doc.usage && doc.usage.length > limit) {
+                doc.usage = doc.usage.slice(-limit);
+            }
+            return doc;
+        });
+
+        const mappedData = [];
+        
+        trimmedDocuments.forEach(doc => {
+            if (doc.labels[0]['k8s-app'] !== undefined) {
+                mappedData.push({
+                    resource_name: doc.resource_name,
+                    label: doc.labels[0]['k8s-app'],
+                    usage: doc.usage,
+                })
+            }
+        })
+        return res.json(mappedData);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 
 
 const PORT = process.env.PORT || 8080;
